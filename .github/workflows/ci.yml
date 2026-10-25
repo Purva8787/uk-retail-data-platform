@@ -1,0 +1,42 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_USER: postgres, POSTGRES_PASSWORD: ci_password, POSTGRES_DB: albion}
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+    env:
+      PG_HOST: localhost
+      PG_PORT: "5432"
+      PG_DB: albion
+      PG_USER: postgres
+      PG_PASSWORD: ci_password
+      MONGO_URI: mongodb://localhost:27017
+      MONGO_DB: albion
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: unit tests
+        run: python -m pytest -q
+      - name: build data, load stores, run notebook
+        run: |
+          python data/generate_data.py
+          python -m ingestion.load_pg
+          python -m mongo.mongo_load
+          jupyter nbconvert --to notebook --execute notebooks/analysis.ipynb --output /tmp/out.ipynb
+      - name: dbt build
+        working-directory: warehouse
+        run: dbt seed && dbt snapshot && dbt build
