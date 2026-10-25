@@ -1,0 +1,14 @@
+# No secrets here: everything comes from environment variables (see ../.env.example).
+# dbt finds this file because you run dbt from the warehouse/ folder.
+albion:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PG_HOST', 'localhost') }}"
+      port: "{{ env_var('PG_PORT', '5432') | int }}"
+      user: "{{ env_var('PG_USER', 'postgres') }}"
+      password: "{{ env_var('PG_PASSWORD') }}"
+      dbname: "{{ env_var('PG_DB', 'albion') }}"
+      schema: analytics
+      threads: 4

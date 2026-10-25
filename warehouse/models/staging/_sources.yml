@@ -1,0 +1,21 @@
+sources:
+  - name: raw
+    description: Curated tables exported by notebooks/analysis.ipynb (Module 6).
+    schema: raw
+    tables:
+      - name: orders
+        loaded_at_field: order_ts
+        columns:
+          - name: order_id
+            data_tests: [unique, not_null]
+      - name: order_items
+      - name: customers
+        columns:
+          - name: customer_id
+            data_tests: [unique, not_null]
+      - name: products
+        columns:
+          - name: sku
+            data_tests: [unique, not_null]
+      - name: reviews
+        description: Exported from MongoDB albion.reviews.

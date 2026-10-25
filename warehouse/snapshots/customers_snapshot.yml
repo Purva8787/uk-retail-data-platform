@@ -1,0 +1,11 @@
+snapshots:
+  - name: customers_snapshot
+    description: >
+      SCD Type 2 history of customers. Each run of `dbt snapshot` closes the old row
+      (dbt_valid_to) and opens a new one when any checked column changes, e.g. a customer moves.
+    relation: source('raw', 'customers')
+    config:
+      schema: snapshots
+      unique_key: customer_id
+      strategy: check
+      check_cols: [full_name, email, postcode, postcode_area, region, nation]

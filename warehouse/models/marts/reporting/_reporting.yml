@@ -1,0 +1,23 @@
+models:
+  - name: rpt_revenue_by_region_month
+    description: "Q1. Monthly revenue by nation/region with year-on-year growth."
+  - name: rpt_daily_orders_calendar
+    description: "Q2. Daily orders with holiday/Black Friday/Christmas flags and uplift vs a 28-day rolling average."
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+  - name: rpt_product_reviews_repeat
+    description: "Q3. Product ratings next to the share of buyers who came back after buying it."
+    columns:
+      - name: sku
+        data_tests: [unique, not_null]
+  - name: rpt_vat_by_period
+    description: "Q4. VAT by tax year, quarter and VAT band."
+  - name: rpt_surcharge_zone_share
+    description: "Q5. Monthly share of orders by delivery band."
+    columns:
+      - name: delivery_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['mainland', 'highlands_islands', 'northern_ireland']

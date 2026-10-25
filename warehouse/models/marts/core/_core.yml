@@ -1,0 +1,82 @@
+models:
+  - name: fct_order_items
+    description: "Star schema fact. Grain: one row per product per order."
+    columns:
+      - name: order_item_id
+        description: "Natural key: order_id-sku."
+        data_tests: [unique, not_null]
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: customer_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: product_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: region_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_region')
+                field: region_key
+      - name: delivery_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['mainland', 'highlands_islands', 'northern_ireland']
+      - name: quantity
+        data_tests: [not_null]
+
+  - name: dim_date
+    description: Calendar with UK tax year (6 April start), ISO week and bank holiday flags per nation.
+    columns:
+      - name: date_key
+        data_tests: [unique, not_null]
+      - name: tax_year
+        data_tests: [not_null]
+
+  - name: dim_customer
+    description: SCD Type 2 customer dimension (from snapshots/customers_snapshot).
+    columns:
+      - name: customer_key
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests: [not_null]
+
+  - name: dim_product
+    columns:
+      - name: product_key
+        data_tests: [unique, not_null]
+      - name: sku
+        data_tests: [unique, not_null]
+      - name: vat_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['standard', 'reduced', 'zero']
+
+  - name: dim_region
+    columns:
+      - name: region_key
+        data_tests: [unique, not_null]
+      - name: postcode_area
+        data_tests: [unique, not_null]
+      - name: nation
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['England', 'Scotland', 'Wales', 'Northern Ireland']
