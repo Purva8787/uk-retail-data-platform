@@ -1,0 +1,65 @@
+models:
+  - name: stg_orders
+    description: One row per order, typed and with the UK-local order date.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests: [not_null]
+      - name: channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['web', 'ios_app', 'android_app']
+      - name: total_gbp
+        data_tests: [not_null]
+  - name: stg_order_items
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: sku
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: sku
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+  - name: stg_products
+    columns:
+      - name: sku
+        data_tests: [unique, not_null]
+      - name: vat_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['standard', 'reduced', 'zero']
+  - name: stg_reviews
+    columns:
+      - name: review_id
+        data_tests: [unique, not_null]
+      - name: rating
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+  - name: stg_postcode_areas
+    columns:
+      - name: postcode_area
+        data_tests: [unique, not_null]
+      - name: delivery_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['mainland', 'highlands_islands', 'northern_ireland']
+  - name: stg_bank_holidays

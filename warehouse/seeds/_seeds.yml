@@ -1,0 +1,32 @@
+seeds:
+  - name: postcode_areas
+    description: UK postcode area to ONS-style region and nation.
+    config:
+      column_types: {postcode_area: varchar(2), region: varchar(40), nation: varchar(20)}
+    columns:
+      - name: postcode_area
+        data_tests: [unique, not_null]
+      - name: nation
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['England', 'Scotland', 'Wales', 'Northern Ireland']
+  - name: uk_bank_holidays
+    description: >
+      GOV.UK bank holidays for the three divisions. Refresh with
+      `python scripts/fetch_bank_holidays.py` (calls https://www.gov.uk/bank-holidays.json).
+    config:
+      column_types: {division: varchar(20), holiday_date: date, title: varchar(80)}
+    columns:
+      - name: division
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['england-and-wales', 'scotland', 'northern-ireland']
+  - name: vat_rates
+    description: HMRC VAT rate per band.
+    config:
+      column_types: {vat_band: varchar(10), vat_rate: "numeric(4,2)"}
+    columns:
+      - name: vat_band
+        data_tests: [unique, not_null]

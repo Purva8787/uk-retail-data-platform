@@ -17,3 +17,4 @@ warehouse/logs/
 logs/
 # os
 .DS_Store
+warehouse/.user.yml
